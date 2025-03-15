@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CONVERT NUMBER INTO WORDS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Convert number into Words</h1>
+    <sub>
+        <label class="numberlable" for="number">Enter a number:</label>
+        <input type="number" id="number" placeholder="Enter a number" class="enternumber">
+        <button class="button" onclick="convertNumberToWords()">Convert to Words</button>
+    </sub>
+    <section>
+        <p id="result"></p>
+    </section>
+   
+    <script>
+        function convertNumberToWords() {
+            const numberInput = document.getElementById("number");
+            const resultElement = document.getElementById("result");
+
+            const number = numberInput.value.trim();
+            if (number === "") {
+                resultElement.innerText = "Please enter a valid number.";
+                return;
+            }
+
+            const num = parseFloat(number);
+            if (isNaN(num)) {
+                resultElement.innerText = "Invalid number";
+                return;
+            }
+
+            const words = numberToWords(num);
+            resultElement.innerText = `Words: ${words}`;
+        }
+
+        function numberToWords(num) {
+            if (num < 0) return "Negative " + numberToWords(Math.abs(num));
+            if (num === 0) return "Zero";
+            
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine','Ten'];
+            const teens = ['Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            const places = ['', 'Thousand', 'Lakh', 'Crore'];
+
+            function getWords(n) {
+                let words = '';
+
+                if (n > 99) {
+                    words += ones[Math.floor(n / 100)] + ' Hundred ';
+                    n %= 100;
+                }
+
+                if (n > 10 && n < 20) {
+                    words += teens[n - 11] + ' ';
+                } else if (n >= 20) {
+                    words += tens[Math.floor(n / 10)] + ' ';
+                    words += ones[n % 10] + ' ';
+                } else if (n > 0) {
+                    words += ones[n] + ' ';
+                }
+
+                return words.trim();
+            }
+
+            let result = '';
+            let place = 0;
+
+            // Handle the Indian numbering system
+            if (num >= 10000000) {
+                const crores = Math.floor(num / 10000000);
+                result += getWords(crores) + ' Crore ';
+                num %= 10000000;
+            }
+            if (num >= 100000) {
+                const lakhs = Math.floor(num / 100000);
+                result += getWords(lakhs) + ' Lakh ';
+                num %= 100000;
+            }
+            if (num >= 1000) {
+                const thousands = Math.floor(num / 1000);
+                result += getWords(thousands) + ' Thousand ';
+                num %= 1000;
+            }
+            if (num > 0) {
+                result += getWords(num) + ' ';
+            }
+
+            return result.trim() + ' Rupees';
+        }
+    </script>
+</body>
+</html>
